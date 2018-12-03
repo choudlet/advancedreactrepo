@@ -39,7 +39,7 @@ export default class SignIn extends Component {
             method="post"
             onSubmit={async e => {
               e.preventDefault();
-              const res = await signIn();
+              await signIn();
               this.setState({
                 password: "",
                 email: ""
