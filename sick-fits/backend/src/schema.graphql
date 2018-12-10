@@ -44,14 +44,4 @@ type User {
   permissions: [Permission!]
 }
 
-type AdFormatData {
-  creativeId: String!
-  advertiserId: String!
-  adGroupId: String!
-  campaignId: String!
-  adFormat: String!
-  advertiserCost: Float!
-  bids: Int!
-  impressions: Int!
-  winRate: Float!
-}
+
