@@ -3,6 +3,7 @@ const jwt = require("jsonwebtoken");
 const { randomBytes } = require("crypto");
 const { promisify } = require("util");
 const { transport, makeANiceEmail } = require("../mail");
+const { hasPermission } = require("../utils");
 
 const Mutations = {
   async createItem(parent, args, ctx, info) {
@@ -40,7 +41,17 @@ const Mutations = {
   },
   async deleteItem(parents, args, ctx, info) {
     const where = { id: args.id };
-    const item = await ctx.db.query.item({ where }, `{id title}`);
+    const item = await ctx.db.query.item({ where }, `{id title user{id}}`);
+
+    const ownsItem = item.user.id === ctx.request.userId;
+
+    const hasPermissions = ctx.request.user.permissions.some(permission =>
+      ["ADMIN", "ITEMCREATE"].includes(permission)
+    );
+
+    if (!ownsItem || !hasPermissions) {
+      throw new Error("You cannot add in a new item");
+    }
     return ctx.db.mutation.deleteItem({ where }, info);
   },
 
@@ -131,7 +142,7 @@ const Mutations = {
     if (args.password !== args.confirmPassword) {
       throw new Error("Passwords do not match");
     }
-    const [user] = await ctx.db.query.users({
+    const [user] = await ctx.db.query.user({
       where: {
         resetToken: args.resetToken,
         resetTokenExpiry_gte: Date.now() - 3600000
@@ -166,6 +177,30 @@ const Mutations = {
     });
 
     return updatedUser;
+  },
+  async updatePermissions(parent, args, ctx, info) {
+    if (!ctx.request.userId) {
+      throw new Error("You must be logged in!");
+    }
+    const currentUser = await ctx.db.query.user(
+      {
+        where: { id: ctx.request.userId }
+      },
+      "{id, permissions, email, name}"
+    );
+    hasPermission(currentUser, ["ADMIN", "PERMISSIONUPDATE"]);
+
+    return ctx.db.mutation.updateUser(
+      {
+        data: {
+          permissions: {
+            set: args.permissions
+          }
+        },
+        where: { id: args.userId }
+      },
+      info
+    );
   }
 };
 
