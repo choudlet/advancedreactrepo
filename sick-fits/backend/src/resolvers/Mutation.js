@@ -254,7 +254,8 @@ const Mutations = {
       },
       info
     );
-  }
+  },
+  async createOrder(parent,args,ctx,info)
 };
 
 module.exports = Mutations;
