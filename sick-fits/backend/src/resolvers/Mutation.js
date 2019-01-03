@@ -255,7 +255,22 @@ const Mutations = {
       info
     );
   },
-  async createOrder(parent,args,ctx,info)
+  async createOrder(parent, args, ctx, info) {
+    const { userId } = ctx.request;
+    if (!userId) {
+      throw new Error("You must be signed in to complete this order");
+    }
+    const user = await ctx.db.query.user(
+      { where: { id: userId } },
+      `{
+        id name email cart {
+          id quantity item {
+            title price id description image }
+          }
+        }`
+    );
+  const amount= user.cart.reduce((tally, cartItem)=> tally + cartItem.price * cartItem.quantity, 0);
+        console.log(`going to charge for a total of ${amount}`);
 };
 
 module.exports = Mutations;
