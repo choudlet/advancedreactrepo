@@ -4,6 +4,7 @@ const { randomBytes } = require("crypto");
 const { promisify } = require("util");
 const { transport, makeANiceEmail } = require("../mail");
 const { hasPermission } = require("../utils");
+const stripe = require("../stripe");
 
 const Mutations = {
   async createItem(parent, args, ctx, info) {
@@ -269,8 +270,17 @@ const Mutations = {
           }
         }`
     );
-  const amount= user.cart.reduce((tally, cartItem)=> tally + cartItem.price * cartItem.quantity, 0);
-        console.log(`going to charge for a total of ${amount}`);
+
+    const amount = user.cart.reduce(
+      (tally, cartItem) => tally + cartItem.item.price * cartItem.quantity,
+      0
+    );
+    const charge = await stripe.charges.create({
+      amount,
+      currency: "USD",
+      source: args.token
+    });
+  }
 };
 
 module.exports = Mutations;

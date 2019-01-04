@@ -1,5 +1,5 @@
 # source: https://us1.prisma.sh/chris-houdlette-47fd4c/sick-fits-test/dev
-# timestamp: Wed Jan 02 2019 15:21:36 GMT-0700 (Mountain Standard Time)
+# timestamp: Thu Jan 03 2019 16:47:46 GMT-0700 (Mountain Standard Time)
 
 type AggregateCartItem {
   count: Int!
@@ -762,7 +762,7 @@ interface Node {
 
 type Order implements Node {
   id: ID!
-  item(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderItem!]
+  items(where: OrderItemWhereInput, orderBy: OrderItemOrderByInput, skip: Int, after: String, before: String, first: Int, last: Int): [OrderItem!]
   total: Int!
   user: User!
   charge: String!
@@ -781,7 +781,7 @@ type OrderConnection {
 input OrderCreateInput {
   total: Int!
   charge: String!
-  item: OrderItemCreateManyInput
+  items: OrderItemCreateManyInput
   user: UserCreateOneInput!
 }
 
@@ -1550,7 +1550,7 @@ input OrderSubscriptionWhereInput {
 input OrderUpdateInput {
   total: Int
   charge: String
-  item: OrderItemUpdateManyInput
+  items: OrderItemUpdateManyInput
   user: UserUpdateOneRequiredInput
 }
 
@@ -1670,9 +1670,9 @@ input OrderWhereInput {
 
   """All values not ending with the given string."""
   charge_not_ends_with: String
-  item_every: OrderItemWhereInput
-  item_some: OrderItemWhereInput
-  item_none: OrderItemWhereInput
+  items_every: OrderItemWhereInput
+  items_some: OrderItemWhereInput
+  items_none: OrderItemWhereInput
   user: UserWhereInput
 }
 
