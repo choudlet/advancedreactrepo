@@ -143,7 +143,9 @@ const Mutations = {
     if (args.password !== args.confirmPassword) {
       throw new Error("Passwords do not match");
     }
-    const [user] = await ctx.db.query.user({
+    console.log("RESTINGINGIN");
+    console.log(args.resetToken);
+    const [user] = await ctx.db.query.users({
       where: {
         resetToken: args.resetToken,
         resetTokenExpiry_gte: Date.now() - 3600000
