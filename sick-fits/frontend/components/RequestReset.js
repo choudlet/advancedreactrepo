@@ -30,6 +30,7 @@ export default class SignIn extends Component {
         {(resetRequest, { error, loading, called }) => (
           <Form
             method="post"
+            data-test="reset-test"
             onSubmit={async e => {
               e.preventDefault();
               await resetRequest();
@@ -62,3 +63,5 @@ export default class SignIn extends Component {
     );
   }
 }
+
+export { REQUEST_RESET_MUTATION };
